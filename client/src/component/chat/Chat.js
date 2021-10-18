@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import Messages from "../Messages/Messages";
 import InfoBar from "../InfoBar/InfoBar";
 import Input from "../Input/Input";
+import "./Chat.css";
 let socket;
 const Chat = ({ location }) => {
   const [name, setName] = useState("");
@@ -17,6 +18,7 @@ const Chat = ({ location }) => {
     socket = io(`http://${ENDPOINT}`);
     setName(name);
     setRoom(room);
+    console.log(room, name);
     socket.emit("join", { name: name, room: room });
     return () => {
       socket.emit("disconnect");

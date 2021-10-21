@@ -13,17 +13,19 @@ const Chat = ({ location }) => {
   const [users, setUsers] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+
+  
   useEffect(() => {
     const { name, room } = querystring.parse(location.search);
     socket = io(`http://${ENDPOINT}`);
     setName(name);
     setRoom(room);
     console.log(room, name);
-    socket.emit("join", { name: name, room: room });
-    return () => {
-      socket.emit("disconnect");
-      socket.off();
-    };
+    socket.emit("join", { name, room }, (error) => {
+      if (error) {
+        alert(error);
+      }
+    });
   }, [ENDPOINT, location.search]);
 
   useEffect(() => {
@@ -46,7 +48,6 @@ const Chat = ({ location }) => {
   return (
     <div>
       <div className="outerContainer">
-        {/* <TextContainer users={users} /> */}
         <div className="container">
           <InfoBar room={room} />
           <Messages messages={messages} name={name} />

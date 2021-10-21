@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const server = http.createServer(app);
 const router = require("./router");
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const { addUser, removeUser, getUser, checkuserexists } = require("./users");
 
 const io = require("socket.io")(server, {
   cors: {
@@ -18,8 +18,15 @@ io.on("connection", (socket) => {
   socket.on("connect", () => {
     console.log(socket.connected); // true
   });
-  socket.on("join", ({ name, room }) => {
-    const { user } = addUser({ id: socket.id, name, room });
+  socket.on("checkuser", ({ name, room }, callback) => {
+    const existeduser = checkuserexists({ name, room });
+    return callback(existeduser);
+  });
+  socket.on("join", ({ name, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, name, room });
+    if (error) console.log(error);
+    if (error) return callback(error);
+
     console.log("===============");
     console.log(user);
     console.log("===============");

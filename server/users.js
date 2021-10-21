@@ -28,9 +28,17 @@ const getUser = (id) => users.find((user) => user.id === id);
 
 const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
+const checkuserexists = ({ name, room }) => {
+  const existeduser = users.find(
+    (user) => user.room === room && user.name === name
+  );
+
+  return existeduser ? "username is taken" : null;
+};
 module.exports = {
   addUser,
   removeUser,
   getUser,
   getUsersInRoom,
+  checkuserexists,
 };

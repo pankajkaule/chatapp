@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { useHistory } from "react-router-dom";
+import { io } from "socket.io-client";
 import "./Join.css";
 
+let socket;
 export default function SignIn() {
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-
+  const history = useHistory();
+  const ENDPOINT = "localhost:5000";
+  const gotochat = () => {
+    socket = io(`http://${ENDPOINT}`);
+    socket.emit("checkuser", { name, room }, (error) => {
+      if (error) {
+        alert(error);
+      } else {
+        history.push(`/chat?name=${name}&room=${room}`);
+      }
+    });
+  };
   return (
     <div className="joinOuterContainer">
       <div className="joinInnerContainer">
@@ -27,14 +39,16 @@ export default function SignIn() {
             onChange={(event) => setRoom(event.target.value)}
           />
         </div>
-        <Link
-          onClick={(e) => (!name || !room ? e.preventDefault() : null)}
-          to={`/chat?name=${name}&room=${room}`}
+
+        <button
+          className={"button mt-20"}
+          type="submit"
+          onClick={() => {
+            gotochat();
+          }}
         >
-          <button className={"button mt-20"} type="submit">
-            Sign In
-          </button>
-        </Link>
+          Sign In
+        </button>
       </div>
     </div>
   );
